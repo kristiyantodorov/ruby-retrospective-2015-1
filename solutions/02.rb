@@ -1,28 +1,21 @@
-dimensions = {width: 10, height: 10}
-
 def next_position(snake, direction)
   [snake[-1][0] + direction[0], snake[-1][1] + direction[1]]
 end
 
 def move(snake, direction)
-  snake = snake[1..-1]
-  snake.push next_position(snake, direction)
+  snake.dup[1..-1].push next_position(snake, direction)
 end
 
 def grow(snake, direction)
-  snake = snake[0..-1]
-  snake.push next_position(snake, direction)
+  snake.dup.push next_position(snake, direction)
 end
 
 def new_food(food, snake, dimensions)
-  food_x = rand(dimensions[:width]).to_i
-  food_y = rand(dimensions[:height]).to_i
-  generated_food = [food_x, food_y]
-  if snake.include? generated_food or food.include? generated_food
-    new_food(food, snake, dimensions)
-  else
-    generated_food
-  end
+  all_positions_x = (0..(dimensions[:width] - 1)).to_a
+  all_positions_y = (0..(dimensions[:height] - 1)).to_a
+  game_positions = all_positions_x.product(all_positions_y)
+  free_positions = game_positions - snake - food
+  free_positions.sample
 end
 
 def obstacle_ahead?(snake, direction, dimensions)

@@ -1,4 +1,9 @@
-module HelperFunctions
+def prime?(number)
+  return false if number < 2
+  (2..Math.sqrt(number)).to_a.none? { |div| number % div == 0 }
+end
+
+module HelperModule
   def divide?(numerator, denominator)
     divisor = 2
     while divisor <= numerator and divisor <= denominator
@@ -9,24 +14,13 @@ module HelperFunctions
     end
     false
   end
-
-  def prime?(number)
-    divisor = 1
-    count = 1
-    while divisor < number
-      if number % divisor == 0
-        count += 1
-      end
-      divisor += 1
-    end
-    count == 2 # true if the number is prime
-  end
 end
-
 
 class RationalSequence
   include Enumerable
-  include HelperFunctions
+  include HelperModule
+
+  attr_reader :numerator, :denominator
 
   def initialize(number)
     @length = number
@@ -44,10 +38,10 @@ class RationalSequence
       end
       if @numerator == 1 and @direction
         @denominator += 1
-        @direction = !@direction
-      elsif @denominator == 1 and !@direction
+        @direction = ! @direction
+      elsif @denominator == 1 and ! @direction
         @numerator += 1
-        @direction = !@direction
+        @direction = ! @direction
       elsif @numerator > 1 and @direction
         @numerator -= 1
         @denominator += 1
@@ -60,7 +54,6 @@ end
 
 class PrimeSequence
   include Enumerable
-  include HelperFunctions
 
   def initialize(number)
     @length = number
@@ -103,23 +96,9 @@ end
 
 module DrunkenMathematician
   module_function
-  include HelperFunctions
-
-  def prime?(number)
-    divisor = 1
-    count = 1
-    while divisor < number
-      if number % divisor == 0
-        count += 1
-      end
-      divisor += 1
-    end
-    count == 2 # true if the number is prime
-  end
-
   def meaningless(n)
     rationals = RationalSequence.new(n).to_a
-    group = rationals.group_by { |n| prime?(n.numerator) or prime?(n.denominator)}
+    group = rationals.group_by { |number| prime?(number.numerator) or prime?(number.denominator) }
     if group.size < 2
       1
     else
